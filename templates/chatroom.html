@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #input {
+
+        }
+
+        #main{
+            margin: 0 auto;
+            width: 45%;
+        }
+
+        #messages {
+            border-radius: 5px;
+            border: 2px solid #888;
+            width:100%;
+            height: 500px;
+            overflow-y: auto;
+        }
+        #input input {
+            padding: 10px 65% 10px 10px;
+            border-radius: 10px;
+            border: 2px #504f4f solid;
+        }
+        .message {
+            padding:10px;
+            border-radius:15px;
+            background-color: cornflowerblue;
+            color: white;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            margin-left: 15px;
+            width:max-content;
+            display:block;
+        }
+        .mymessage {
+            padding:10px;
+            border-radius:15px;
+            background-color: #af0000;
+            color: white;
+            margin: 10px 15px 10px auto;
+            width:max-content;
+            text-align:right;
+            display:block;
+        }
+        .who {
+            color: #504f4f;
+            margin: 10px 10px 35px 15px;
+            font: 10px bold;
+            text-align: left;
+            display:block;
+        }
+
+        .mywho {
+            color: #504f4f;
+            margin: 10px 15px 35px 10px;
+            font: 10px bold;
+            text-align: right;
+            display:block;
+        }
+    </style>
+
+    <script>
+        {% if ID %}
+            var user = "{{ name }}";
+            var id = {{ ID }};
+            var type = "{{ type }}";
+            let socket = new WebSocket("ws://ip172-18-0-73-ccaok8ld48eg008gtmd0-38249.direct.labs.play-with-docker.com:38249/");
+            socket.onopen = function(e) {
+              alert("[open] Connection established");
+              alert("Sending to server,  {{ name }}");
+              socket.send(JSON.stringify({'username':`${user}`, 'ID': `${id}`, 'type':`${type}`}));
+            };
+
+            socket.onmessage = function(event) {
+              //alert(`[message] Data received from server: ${event.data}`);
+              var json = JSON.parse(event.data);
+              var messages = document.getElementById("messages");
+              var div = document.createElement("div");
+              var whodiv = document.createElement("div");
+              var whospan = document.createElement("span");
+              if (json['type'] === 'self'){
+                  div.className = "mymessage";
+                   whodiv.className = "mywho";
+              }else {
+                  div.className = "message";
+                  whodiv.className = "who";
+              }
+              var span = document.createElement("span");
+              span.innerText = json['msg'];
+
+
+
+              whospan.innerText = json['usr'];
+              whodiv.appendChild(whospan);
+              div.appendChild(span);
+              messages.appendChild(div);
+              messages.appendChild(whodiv)
+            };
+
+            socket.onclose = function(event) {
+              if (event.wasClean) {
+                alert(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
+              } else {
+                // e.g. server process killed or network down
+                // event.code is usually 1006 in this case
+                alert('[close] Connection died');
+              }
+            };
+
+            function sendmessage(){
+                var message = document.getElementById("message");
+                socket.send(JSON.stringify({"msg": `${message.value}`, 'ID': id}));
+            }
+        {% endif %}
+    </script>
+</head>
+<body>
+    <div id="main">
+        <div id="messages">
+            {% for message in messages %}
+                <div class="message"><span>{{ message }}</span></div>
+                <div class="who"><span>{{ who }}</span></div>
+            {% endfor %}
+        </div>
+        <div id="input">
+            <input id="message" type="text" placeholder="Type a message">
+            <button onclick="sendmessage()">Send</button>
+        </div>
+    </div>
+</body>
+</html>

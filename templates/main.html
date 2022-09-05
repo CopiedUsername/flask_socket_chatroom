@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        div {
+            margin: 0 auto;
+            width: 40%;
+        }
+        div h1, div p {
+            margin: 0 auto;
+            text-align: center;
+        }
+        form input {
+            display: block;
+            margin: 0 auto;
+            margin-bottom: 5%;
+            margin-top: 5%;
+        }
+
+        .type {
+            border-radius: 10px;
+
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Welcome to chatrooms!</h1>
+        <p>You can join a chatroom via an ID and username</p>
+        <form action="" method="post">
+            <input size="6" type="text" name="ID" class="type" placeholder="Room ID" required>
+            <input size="25" type="text" name="username" class="type" placeholder="Username" required>
+            <input type="submit" class="submit" name="type" value="join">
+            <input type="submit" class="submit" name="type" value="create">
+        </form>
+    </div>
+</body>
+</html>
